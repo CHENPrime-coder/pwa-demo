@@ -61,7 +61,7 @@ const { needRefresh, updateServiceWorker } = useRegisterSW({
   },
 })
 
-const title = computed(() => {
+const message = computed(() => {
   if (needRefresh.value)
     return 'New content available, click on reload button to update.'
   return ''
@@ -167,59 +167,59 @@ function isAndroid() {
 </script>
 
 <template>
-  <div
+  <v-card
       v-if="needRefresh"
-      class="absolute bottom-4 right-4 w-96 shadow-sm p-4"
+      class="absolute top-4 right-4 w-96 shadow-sm p-4"
       aria-labelledby="toast-message"
       role="alert"
+      title="PWA更新提示"
+      :text="message"
   >
-    <h2 class="card-title">PWA Message</h2>
-    <span id="toast-message">
-        {{ title }}
-      </span>
-    <div class="card-actions justify-end">
-      <button type="button" class="btn btn-primary" @click="updateServiceWorker()">
+    <template v-slot:actions>
+      <v-btn @click="updateServiceWorker()">
         Reload
-      </button>
-      <button class="btn btn-outline btn-primary" type="button" @click="close">
+      </v-btn>
+      <v-btn variant="outlined" @click="close">
         Close
-      </button>
-    </div>
-  </div>
+      </v-btn>
+    </template>
+  </v-card>
   
-  <div class="absolute bottom-4 right-4">
+  <div class="absolute top-4 right-4">
     <!-- PWA安装按钮 - 当检测到beforeinstallprompt时显示 -->
-    <input 
+    <v-btn 
       v-if="installable" 
       @click="installPWA" 
       class="btn btn-outline btn-primary"
       type="button"
-      value="📱安装此应用"
-    />
+    >
+      📱安装此应用
+    </v-btn>
     
     <!-- 手动安装按钮 - 当未检测到beforeinstallprompt但可能是PWA时显示 -->
-    <input 
+    <v-btn 
       v-if="isManualInstallShown" 
       @click="showManualInstallGuide" 
       class="btn btn-outline btn-secondary"
       type="button"
-      value="📲如何安装"
-    />
+    >
+      📲如何安装
+    </v-btn>
   </div>
 
   <!-- 调试信息面板 -->
-  <div class="card bg-primary text-primary-content absolute bottom-4 left-[4%] w-[92%]" v-if="debug">
+  <div class="card bg-primary text-primary-content absolute top-4 left-[4%] w-[92%]" v-if="debug">
     <div class="card-body">
       <h4 class="card-title">PWA调试信息</h4>
       <p class="justify-end card-actions">
-        <button class="btn btn-outline btn-sm absolute top-4 right-4" @click="debug = !debug">
+        <v-btn class="absolute top-4 right-4" @click="debug = !debug">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><!-- Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="M7 13q-.425 0-.712-.288T6 12t.288-.712T7 11h10q.425 0 .713.288T18 12t-.288.713T17 13z"/></svg>
-        </button>
+        </v-btn>
         <span>{{ debugMessage }}</span>
       </p>
     </div>
   </div>
-  <button class="btn btn-outline btn-sm absolute bottom-4 left-4" v-if="!debug" @click="debug = !debug">
+  <v-btn class="absolute bottom-4 left-4" v-if="!debug" @click="debug = !debug">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><!-- Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="m6.85 12l2.45 2.45q.3.3.288.7t-.288.7q-.3.3-.712.313t-.713-.288L4.7 12.7q-.3-.3-.3-.7t.3-.7l3.175-3.175q.3-.3.713-.287t.712.312q.275.3.288.7t-.288.7zM7 20v1h10v-1zM7 4h10V3H7zm10.15 8L14.7 9.55q-.3-.3-.287-.7t.287-.7q.3-.3.713-.312t.712.287L19.3 11.3q.3.3.3.7t-.3.7l-3.175 3.175q-.3.3-.712.288t-.713-.313q-.275-.3-.287-.7t.287-.7zM7 4V3zm0 16v1zm0 3q-.825 0-1.412-.587T5 21v-3q0-.425.288-.712T6 17t.713.288T7 18h10q0-.425.288-.712T18 17t.713.288T19 18v3q0 .825-.587 1.413T17 23zM7 1h10q.825 0 1.413.588T19 3v3q0 .425-.288.713T18 7t-.712-.288T17 6H7q0 .425-.288.713T6 7t-.712-.288T5 6V3q0-.825.588-1.412T7 1"/></svg>
-  </button>
+  </v-btn>
 </template>
