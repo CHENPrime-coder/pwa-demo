@@ -1,8 +1,8 @@
 import { VitePWA } from 'vite-plugin-pwa';
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import tailwindcss from '@tailwindcss/vite'
-import vuetify from 'vite-plugin-vuetify'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
+import vuetify from 'vite-plugin-vuetify';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -34,5 +34,10 @@ export default defineConfig({
       suppressWarnings: true,
       type: 'module',
     },
-  }), tailwindcss(), vuetify({ autoImport: true }) ],
-})
+  }), tailwindcss(), vuetify({ autoImport: true })],
+  resolve: {
+    alias: {
+      '@': '/src',
+    }
+  }
+});

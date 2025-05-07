@@ -3,5 +3,5 @@
 </script>
 
 <template>
-    <h1>Order Dishes</h1>
+  <h1>Order Dishes</h1>
 </template>
