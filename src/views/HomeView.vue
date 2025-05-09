@@ -3,12 +3,13 @@
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <v-main class="flex-1 bg-gray-100">
+    <v-main class="flex-1 bg-zinc-100">
       <router-view />
     </v-main>
     <v-bottom-navigation
       grow
       mandatory
+      class="!left-0 !w-full"
     >
       <v-btn to="dishes">
         <v-icon icon="mdi-food-fork-drink" />

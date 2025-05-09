@@ -20,6 +20,18 @@ const routes = [
         ]
     },
     {
+        path: '/customer-service',
+        component: () => import('@/views/account/CustomerServiceView.vue')
+    },
+    {
+        path: '/address-management',
+        component: () => import('@/views/account/AddressManagementView.vue')
+    },
+    {
+        path: '/login',
+        component: () => import('@/views/LoginView.vue')
+    },
+    {
         path: '/:pathMatch(.*)*',
         name: 'Default',
         redirect: '/',
