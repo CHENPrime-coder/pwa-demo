@@ -1,5 +1,6 @@
 <script setup>
 import TheCommonDialog from './components/TheCommonDialog.vue';
+import TheToast from './components/TheToast.vue';
 import mitt from './plugins/mitt';
 
 mitt.on('back', () => {
@@ -14,4 +15,5 @@ mitt.on('back', () => {
     </v-app>
   </v-responsive>
   <the-common-dialog />
+  <the-toast />
 </template>

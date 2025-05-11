@@ -7,7 +7,7 @@ import router from '@/plugins/router';
 import { pinia } from '@/plugins/pinia';
 
 createApp(App)
+    .use(pinia)
     .use(router)
     .use(vuetify)
-    .use(pinia)
     .mount('#app');

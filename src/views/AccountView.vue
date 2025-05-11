@@ -1,18 +1,28 @@
 <script setup>
-import { colors } from '@/tools/color';
-import { ref } from 'vue';
+import { colors } from '@/tools/colors';
+import { ref, useTemplateRef } from 'vue';
 import mitt from '@/plugins/mitt';
+import { useUserStore } from '@/stores/user';
+import rules from '@/tools/rules';
 
-const username = ref('张三');
-const uid = ref('1234567890');
+const user = useUserStore();
 const year = new Date().getFullYear();
 const version = ref('1.0.0');
 const appName = ref('点餐系统');
 const modifyUsernameDialog = ref(false);
+const form = useTemplateRef('form');
+const username = ref(user.userName);
 
-const modifyUsername = () => {
-  // TODO: Perform username modification logic here
+const modifyUsername = async () => {
+  const isValid = (await form.value.validate()).valid;
+  if (!isValid) {
+    return;
+  }
+  user.setUsername(username.value);
   modifyUsernameDialog.value = false;
+  mitt.emit('showToast', {
+    msg: '用户名修改成功',
+  });
 };
 const openDeleteAccountConfirmDialog = () => {
   mitt.emit('openDialog', {
@@ -42,7 +52,7 @@ const openLogoutConfirmDialog = () => {
   <div class="flex flex-col items-center">
     <v-img
       class="w-[25vw] h-[25vw] rounded-full mt-16 mb-8 !max-w-[168px] !max-h-[168px]"
-      :src="`https://ui-avatars.com/api/?name=${username}`"
+      :src="`https://ui-avatars.com/api/?name=${user.userName}`"
     >
       <template #placeholder>
         <div class="d-flex align-center justify-center fill-height">
@@ -55,9 +65,9 @@ const openLogoutConfirmDialog = () => {
     </v-img>
     <div class="flex flex-col items-center">
       <p class="text-3xl font-bold">
-        {{ username }}
+        {{ user.userName }}
       </p>
-      <p>UID: {{ uid }}</p>
+      <p>UID: {{ user.userId }}</p>
     </div>
     <div class="w-[80vw] shadow-sm mt-8">
       <v-list class="!p-0">
@@ -118,32 +128,34 @@ const openLogoutConfirmDialog = () => {
     class="!w-[80vw] !max-w-[80vw]"
     :style="{ 'max-width': '80vw' }"
   >
-    <v-card
-      title="修改用户名"
-    >
-      <v-card-text>
-        <v-text-field
-          v-model="username"
-          label="用户名"
-          outlined
-          class="w-full"
-        />
-      </v-card-text>
-      <v-card-actions>
-        <v-btn
-          text
-          @click="modifyUsernameDialog = false"
-        >
-          取消
-        </v-btn>
-        <v-btn
-          text
-          color="primary"
-          @click="modifyUsername"
-        >
-          确定
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+    <v-form ref="form">
+      <v-card title="修改用户名">
+        <v-card-text>
+          <v-text-field
+            v-model="username"
+            :rules="[rules.required]"
+            label="用户名"
+            variant="outlined"
+            class="w-full"
+            clearable
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            text
+            @click="modifyUsernameDialog = false"
+          >
+            取消
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            @click="modifyUsername"
+          >
+            确定
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-form>
   </v-dialog>
 </template>

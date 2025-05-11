@@ -39,5 +39,6 @@ export default defineConfig({
     alias: {
       '@': '/src',
     }
-  }
+  },
+  assetsInclude: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.jpeg'],
 });

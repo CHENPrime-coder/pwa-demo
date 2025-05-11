@@ -1,4 +1,9 @@
 import { createWebHistory, createRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+
+const whiteList = [
+    '/login',
+];
 
 const routes = [
     {
@@ -44,6 +49,24 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+    if (whiteList.includes(to.path)) {
+        // If the route is in the white list, allow access
+        next();
+        return;
+    }
+    const user = useUserStore();
+    if (!user.isLoggedIn) {
+        // Try to load the localStorage user data
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            // If user data exists, set it in the store
+            user.setUser(JSON.parse(userData));
+        } else {
+            // If no user data, redirect to login page
+            next({ path: '/login' });
+            return;
+        }
+    }
     // 默认路由
     if (to.path === '/') {
         next({ path: '/dishes' });
