@@ -13,6 +13,10 @@ export const useUserStore = defineStore('user', {
                 return;
             }
             this.user.name = name;
+        },
+        logout() {
+            this.user = null;
+            localStorage.removeItem('user');
         }
     },
     getters: {

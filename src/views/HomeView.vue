@@ -11,17 +11,17 @@
       mandatory
       class="!left-0 !w-full"
     >
-      <v-btn to="dishes">
+      <v-btn to="/dishes/all">
         <v-icon icon="mdi-food-fork-drink" />
         <span>点菜</span>
       </v-btn>
 
-      <v-btn to="history">
+      <v-btn to="/history">
         <v-icon icon="mdi-history" />
         <span>历史订单</span>
       </v-btn>
 
-      <v-btn to="account">
+      <v-btn to="/account">
         <v-icon icon="mdi-account-circle" />
         <span>我的</span>
       </v-btn>

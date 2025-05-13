@@ -4,6 +4,7 @@ import { ref, useTemplateRef } from 'vue';
 import mitt from '@/plugins/mitt';
 import { useUserStore } from '@/stores/user';
 import rules from '@/tools/rules';
+import router from '@/plugins/router';
 
 const user = useUserStore();
 const year = new Date().getFullYear();
@@ -40,9 +41,12 @@ const openLogoutConfirmDialog = () => {
     msg: '确定退出登录吗？',
     cancelable: true,
     callbackConfirm: () => {
-      // TODO: Perform logout logic here
-      console.log('Logged out');
       mitt.emit('closeDialog');
+      user.logout();
+      router.push('/login');
+      mitt.emit('showToast', {
+        msg: '已退出登录',
+      });
     },
   });
 };

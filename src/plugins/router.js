@@ -12,7 +12,17 @@ const routes = [
         children: [
             {
                 path: 'dishes',
-                component: () => import('@/views/OrderDishesView.vue')
+                component: () => import('@/views/OrderDishesView.vue'),
+                children: [
+                    {
+                        path: 'cart',
+                        component: () => import('@/views/order-dishes/CartView.vue')
+                    },
+                    {
+                        path: ':category',
+                        component: () => import('@/views/order-dishes/DishesListView.vue')
+                    },
+                ]
             },
             {
                 path: 'history',
@@ -63,13 +73,15 @@ router.beforeEach((to, from, next) => {
             user.setUser(JSON.parse(userData));
         } else {
             // If no user data, redirect to login page
+            console.log('No user data found, redirecting to login page');
+            
             next({ path: '/login' });
             return;
         }
     }
     // 默认路由
     if (to.path === '/') {
-        next({ path: '/dishes' });
+        next({ path: '/dishes/all' });
     } else {
         next();
     }

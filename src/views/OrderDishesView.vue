@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue';
 
-const tab = ref('option-1');
 const sidebarOpen = ref(false);
 </script>
 
@@ -18,13 +17,11 @@ const sidebarOpen = ref(false);
       <v-navigation-drawer
         v-model="sidebarOpen"
         width="100"
-        class="border-e bg-white pt-4 !absolute"
+        class="border-e bg-white pt-4 !absolute !z-[30]"
         clipped
         :scrim="false"
-        style="position: relative; z-index: 201; height: 100%;"
       >
         <v-tabs
-          v-model="tab"
           class="!h-[82vh] flex flex-col relative"
           color="primary"
           stacked
@@ -34,21 +31,20 @@ const sidebarOpen = ref(false);
             class="h-auto mb-4 justify-center"
             prepend-icon="mdi-view-grid-outline"
             text="全部"
-            value="option-1"
+            to="/dishes/all"
           />
           <v-tab
             class="h-auto mb-4 mt-auto justify-center"
             prepend-icon="mdi-shopping-outline"
             text="购物车"
-            value="option-bottom"
+            to="/dishes/cart"
           />
         </v-tabs>
       </v-navigation-drawer>
       <div
-        class="!p-4 flex-1 h-full min-w-0"
-        style="min-height: 0;"
+        class="flex-1 h-full"
       >
-        <span>{{ tab }}</span>
+        <router-view />
       </div>
     </div>
   </div>
