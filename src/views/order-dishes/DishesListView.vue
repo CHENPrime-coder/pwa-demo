@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import DishesItem from '@/components/DishesItem.vue';
+import { useCartStore } from '@/stores/cart';
 
+const searchKeyword = ref('');
 const testDishes = ref([
   {
     id: 1,
@@ -148,6 +150,30 @@ const testDishes = ref([
     selectedCount: 0
   }
 ]);
+const cartStore = useCartStore();
+
+const results = ref(testDishes.value);
+const handleSearchClick = () => {
+  if (searchKeyword.value === '') {
+    results.value = testDishes.value;
+  } else {
+    results.value = testDishes.value.filter(dish =>
+      dish.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
+    );
+  }
+  loadFromCart();
+};
+const loadFromCart = () => {
+  const cartDishes = cartStore.cart;
+  results.value.forEach(dish => {
+    const cartDish = cartDishes.find(item => item.id === dish.id);
+    if (cartDish) {
+      dish.selectedCount = cartDish.selectedCount;
+    }
+  });
+};
+
+loadFromCart();
 </script>
 
 <template>
@@ -155,15 +181,23 @@ const testDishes = ref([
     <!-- 搜索框 -->
     <div class="flex items-center justify-center !pt-4 !px-4">
       <v-text-field
+        v-model="searchKeyword"
         class="w-[80vw]"
-        label="搜索菜品"
-        prepend-icon="mdi-magnify"
-        outlined
-      />
+        label="搜索菜品 (名称)"
+        variant="outlined"
+      >
+        <template #append-inner>
+          <v-btn
+            icon="mdi-magnify"
+            variant="text"
+            @click="handleSearchClick"
+          />
+        </template>
+      </v-text-field>
     </div>
     <div class="overflow-y-auto flex-1 min-h-0">
       <dishes-item
-        v-for="dish in testDishes"
+        v-for="dish in results"
         :key="dish.id"
         :dish="dish"
       />

@@ -1,7 +1,15 @@
 <script setup>
 import { ref } from 'vue';
+import { useCartStore } from '@/stores/cart';
+import mitt from '@/plugins/mitt';
 
 const sidebarOpen = ref(false);
+const cartStore = useCartStore();
+cartStore.loadCart();
+
+mitt.on('update:selectedCount', ({ dish, isAdd }) => {
+  cartStore.updateItemCount(dish, isAdd);
+});
 </script>
 
 <template>
@@ -35,10 +43,17 @@ const sidebarOpen = ref(false);
           />
           <v-tab
             class="h-auto mb-4 mt-auto justify-center"
-            prepend-icon="mdi-shopping-outline"
-            text="购物车"
             to="/dishes/cart"
-          />
+          >
+            <v-badge
+              color="error"
+              :content="cartStore.cartTotalCount"
+              :model-value="cartStore.cartTotalCount != 0"
+            >
+              <v-icon>mdi-shopping-outline</v-icon>
+            </v-badge>
+            <span>购物车</span>
+          </v-tab>
         </v-tabs>
       </v-navigation-drawer>
       <div
