@@ -25,13 +25,7 @@ const handleCheckoutClick = () => {
     return;
   }
 
-  router.push({
-    name: 'Checkout',
-    query: {
-      totalPrice: cartStore.cartTotalPrice,
-      totalCount: cartStore.cartTotalCount
-    }
-  });
+  router.push('/checkout');
 };
 </script>
 

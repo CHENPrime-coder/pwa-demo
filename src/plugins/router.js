@@ -22,6 +22,10 @@ const routes = [
                         path: ':category',
                         component: () => import('@/views/order-dishes/DishesListView.vue')
                     },
+                    {
+                        path: '',
+                        redirect: '/dishes/all'
+                    }
                 ]
             },
             {
@@ -45,6 +49,10 @@ const routes = [
     {
         path: '/login',
         component: () => import('@/views/LoginView.vue')
+    },
+    {
+        path: '/checkout',
+        component: () => import('@/views/CheckoutView.vue')
     },
     {
         path: '/:pathMatch(.*)*',
@@ -71,6 +79,8 @@ router.beforeEach((to, from, next) => {
         if (userData) {
             // If user data exists, set it in the store
             user.setUser(JSON.parse(userData));
+            const addressesData = localStorage.getItem('addresses');
+            user.setAddresses(JSON.parse(addressesData) ?? []);
         } else {
             // If no user data, redirect to login page
             console.log('No user data found, redirecting to login page');

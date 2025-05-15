@@ -1,4 +1,5 @@
 <script setup>
+
 </script>
 
 <template>
@@ -11,7 +12,7 @@
       mandatory
       class="!left-0 !w-full"
     >
-      <v-btn to="/dishes/all">
+      <v-btn to="/dishes">
         <v-icon icon="mdi-food-fork-drink" />
         <span>点菜</span>
       </v-btn>

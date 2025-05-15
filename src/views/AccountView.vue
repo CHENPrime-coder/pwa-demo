@@ -29,9 +29,12 @@ const openDeleteAccountConfirmDialog = () => {
   mitt.emit('openDialog', {
     msg: '确定注销账号吗？',
     callbackConfirm: () => {
-      // TODO: Perform account deletion logic here
-      console.log('Account deleted');
       mitt.emit('closeDialog');
+      user.logout();
+      router.push('/login');
+      mitt.emit('showToast', {
+        msg: '已注销账户',
+      });
     },
     cancelable: true,
   });

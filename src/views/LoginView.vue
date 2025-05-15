@@ -26,6 +26,7 @@ const handleLoginClick = async () => {
   userStore.setUser({
     name: username.value,
     id: Math.floor(Math.random() * 1000),
+    defaultAddressId: 1,
   });
   mitt.emit('showToast', {
     msg: '登录成功',

@@ -8,6 +8,7 @@ const { dish } = defineProps({
   }
 });
 
+const showImageDetail = ref(false);
 const selectedCount = ref(dish.selectedCount);
 const handleAddClick = () => {
   selectedCount.value++;
@@ -31,10 +32,30 @@ const notifyDataChange = (isAdd) => {
   <div
     class="mt-4 mx-4 bg-white rounded-lg shadow-md flex"
   >
+    <v-overlay
+      v-model="showImageDetail"
+      class="flex justify-center items-center"
+    >
+      <v-img
+        src="https://ui-avatars.com/api/?name=占位"
+        class="w-[100vw]"
+        cover
+      >
+        <template #placeholder>
+          <div class="d-flex align-center justify-center fill-height">
+            <v-progress-circular
+              color="grey-lighten-4"
+              indeterminate
+            />
+          </div>
+        </template>
+      </v-img>
+    </v-overlay>
     <v-img
       src="https://ui-avatars.com/api/?name=占位"
-      class="rounded-bl-lg rounded-tl-lg !max-w-[10vw] !min-w-[6rem]"
+      class="rounded-bl-lg rounded-tl-lg !max-w-[10vw] !min-w-[8rem]"
       cover
+      @click="showImageDetail = true"
     >
       <template #placeholder>
         <div class="d-flex align-center justify-center fill-height">
