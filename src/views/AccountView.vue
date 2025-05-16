@@ -1,6 +1,6 @@
 <script setup>
 import { colors } from '@/tools/colors';
-import { ref, useTemplateRef } from 'vue';
+import { ref, useTemplateRef, onMounted } from 'vue';
 import mitt from '@/plugins/mitt';
 import { useUserStore } from '@/stores/user';
 import rules from '@/tools/rules';
@@ -13,6 +13,38 @@ const appName = ref('点餐系统');
 const modifyUsernameDialog = ref(false);
 const form = useTemplateRef('form');
 const username = ref(user.userName);
+const deferredPrompt = ref(null);
+
+onMounted(() => {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // 防止 Chrome 67 及更早版本自动显示安装提示
+    e.preventDefault();
+    // 存储事件以便稍后触发
+    deferredPrompt.value = e;
+    // 可选：更新 UI 通知用户 PWA 可以安装
+    // console.log('beforeinstallprompt event fired');
+  });
+});
+
+const installOrUpdateApp = async () => {
+  if (deferredPrompt.value) {
+    deferredPrompt.value.prompt();
+    const { outcome } = await deferredPrompt.value.userChoice;
+    if (outcome === 'accepted') {
+      mitt.emit('showToast', { msg: '应用安装成功' });
+    } else {
+      mitt.emit('showToast', { msg: '用户取消安装' });
+    }
+    deferredPrompt.value = null;
+  } else {
+    // deferredPrompt.value 为 null 有几种情况：
+    // 1. PWA 已经安装
+    // 2. 浏览器不支持 'beforeinstallprompt' 事件 (例如桌面版 Safari, Firefox 早期版本)
+    // 3. 'beforeinstallprompt' 事件尚未触发 (例如，PWA 不符合安装条件)
+    // 4. 用户已经拒绝过安装提示 (某些浏览器可能不会再次提示)
+    mitt.emit('showToast', { msg: '应用已是最新版本或无法发起安装提示。' });
+  }
+};
 
 const modifyUsername = async () => {
   const isValid = (await form.value.validate()).valid;
@@ -91,6 +123,13 @@ const openLogoutConfirmDialog = () => {
           prepend-icon="mdi-account-edit"
           title="修改用户名"
           @click="modifyUsernameDialog = true"
+        />
+        <v-list-item
+          color="primary"
+          append-icon="mdi-chevron-right"
+          prepend-icon="mdi-download"
+          title="安装或更新应用程序"
+          @click="installOrUpdateApp"
         />
         <v-divider />
         <v-list-item
