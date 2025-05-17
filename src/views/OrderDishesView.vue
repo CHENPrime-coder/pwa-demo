@@ -5,6 +5,17 @@ import mitt from '@/plugins/mitt';
 
 const sidebarOpen = ref(false);
 const cartStore = useCartStore();
+const categories = ref([
+  { name: '炒菜', icon: 'mdi-view-grid-outline' },
+  { name: '火锅', icon: 'mdi-fire' },
+  { name: '海鲜', icon: 'mdi-fish' },
+  { name: '肉类', icon: 'mdi-view-grid-outline' },
+  { name: '家常菜', icon: 'mdi-home' },
+  { name: '素菜', icon: 'mdi-leaf' },
+  { name: '面食', icon: 'mdi-pasta' },
+  { name: '西餐', icon: 'mdi-silverware-fork-knife' },
+  { name: '日料', icon: 'mdi-view-grid-outline' }
+]);
 cartStore.loadCart();
 
 mitt.on('update:selectedCount', ({ dish, isAdd }) => {
@@ -25,12 +36,12 @@ mitt.on('update:selectedCount', ({ dish, isAdd }) => {
       <v-navigation-drawer
         v-model="sidebarOpen"
         width="100"
-        class="border-e bg-white pt-4 !absolute !z-[30]"
+        class="border-e bg-white pt-4 !absolute !z-[30] flex"
         clipped
         :scrim="false"
       >
         <v-tabs
-          class="!h-[82vh] flex flex-col relative"
+          class="flex flex-col flex-1 relative justify-between"
           color="primary"
           stacked
           direction="vertical"
@@ -42,7 +53,16 @@ mitt.on('update:selectedCount', ({ dish, isAdd }) => {
             to="/dishes/all"
           />
           <v-tab
-            class="h-auto mb-4 mt-auto justify-center"
+            v-for="category in categories"
+            :key="category.name"
+            class="h-auto mb-4 justify-center"
+            :to="`/dishes/${category.name}`"
+            :text="category.name"
+            :prepend-icon="category.icon"
+          />
+          <v-divider class="mb-4" />
+          <v-tab
+            class="h-auto mb-4 justify-center"
             to="/dishes/cart"
           >
             <v-badge
@@ -57,7 +77,7 @@ mitt.on('update:selectedCount', ({ dish, isAdd }) => {
         </v-tabs>
       </v-navigation-drawer>
       <div
-        class="flex-1 h-full"
+        class="flex-1 flex min-h-0"
       >
         <router-view />
       </div>

@@ -30,7 +30,7 @@ const handleCheckoutClick = () => {
 </script>
 
 <template>
-  <div class="flex flex-col max-h-[50rem] h-[50rem] overflow-hidden">
+  <div class="flex flex-col h-full w-full flex-1">
     <!-- 搜索框 -->
     <div class="flex items-center justify-center !pt-4 !px-4">
       <v-text-field
@@ -48,13 +48,15 @@ const handleCheckoutClick = () => {
         </template>
       </v-text-field>
     </div>
-    <div class="overflow-y-auto flex-1 min-h-0">
+    <div
+      id="dishes"
+      class="overflow-y-auto flex-1 flex h-auto min-h-0"
+    >
       <dishes-item
         v-for="dish in results"
         :key="dish.id"
         :dish="dish"
       />
-      <div class="h-[20rem]" />
     </div>
     <!-- 结算区域：总价、结算按钮 -->
     <div class="flex items-center justify-between !p-4 border-t">

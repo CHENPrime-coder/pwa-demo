@@ -1,9 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import DishesItem from '@/components/DishesItem.vue';
 import { useCartStore } from '@/stores/cart';
+import { useRoute } from 'vue-router';
 
 const searchKeyword = ref('');
+const route = useRoute();
 const testDishes = ref([
   {
     id: 1,
@@ -151,14 +153,27 @@ const testDishes = ref([
   }
 ]);
 const cartStore = useCartStore();
-
 const results = ref(testDishes.value);
+
+watch(
+  () => route.params.category,
+  (newCategory) => {
+    searchKeyword.value = '';
+    if (newCategory === 'all') {
+      results.value = testDishes.value;
+    } else {
+      results.value = testDishes.value.filter(dish => dish.category === newCategory);
+    }
+  },
+  { immediate: true }
+);
+
 const handleSearchClick = () => {
   if (searchKeyword.value === '') {
     results.value = testDishes.value;
   } else {
     results.value = testDishes.value.filter(dish =>
-      dish.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
+      dish.name.toLowerCase().includes(searchKeyword.value.toLowerCase()) && (dish.category === route.params.category || route.params.category === 'all')
     );
   }
   loadFromCart();
@@ -177,7 +192,7 @@ loadFromCart();
 </script>
 
 <template>
-  <div class="flex flex-col max-h-[50rem] h-[50rem] overflow-hidden">
+  <div class="flex flex-col w-full overflow-hidden h-screen">
     <!-- 搜索框 -->
     <div class="flex items-center justify-center !pt-4 !px-4">
       <v-text-field
@@ -195,7 +210,10 @@ loadFromCart();
         </template>
       </v-text-field>
     </div>
-    <div class="overflow-y-auto flex-1 min-h-0">
+    <div
+      id="dishes"
+      class="overflow-y-auto flex-1 min-h-0"
+    >
       <dishes-item
         v-for="dish in results"
         :key="dish.id"
