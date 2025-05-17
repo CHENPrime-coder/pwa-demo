@@ -52,11 +52,14 @@ const handleCheckoutClick = () => {
       id="dishes"
       class="overflow-y-auto flex-1 flex-col flex h-auto min-h-0"
     >
-      <dishes-item
-        v-for="dish in results"
-        :key="dish.id"
-        :dish="dish"
-      />
+      <div class="h-[1px]">
+        <dishes-item
+          v-for="dish in results"
+          :key="dish.id"
+          :dish="dish"
+        />
+        <div class="h-[15rem]" />
+      </div>
     </div>
     <!-- 结算区域：总价、结算按钮 -->
     <div class="flex items-center justify-between !p-4 border-t">

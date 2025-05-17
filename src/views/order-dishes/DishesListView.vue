@@ -192,7 +192,7 @@ loadFromCart();
 </script>
 
 <template>
-  <div class="flex flex-col w-full overflow-hidden h-screen">
+  <div class="flex flex-col w-full overflow-hidden h-screen pb-[20rem]">
     <!-- 搜索框 -->
     <div class="flex items-center justify-center !pt-4 !px-4">
       <v-text-field

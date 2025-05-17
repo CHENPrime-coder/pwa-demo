@@ -52,7 +52,7 @@ mitt.on('update:selectedCount', ({ dish, isAdd }) => {
             text="全部"
             to="/dishes/all"
           />
-          <div class="overflow-y-auto max-h-[50vh]">
+          <div class="overflow-y-auto max-h-[50vh] flex flex-col items-center">
             <v-tab
               v-for="category in categories"
               :key="category.name"
