@@ -6,6 +6,10 @@ import { useUserStore } from '@/stores/user';
 import rules from '@/tools/rules';
 import router from '@/plugins/router';
 
+import { useRegisterSW } from 'virtual:pwa-register/vue';
+// periodic sync is disabled, change the value to enable it, the period is in milliseconds
+const period = 0;
+
 const user = useUserStore();
 const year = new Date().getFullYear();
 const version = ref('1.0.0');
@@ -13,7 +17,68 @@ const appName = ref('点餐系统');
 const modifyUsernameDialog = ref(false);
 const form = useTemplateRef('form');
 const username = ref(user.userName);
+
 const deferredPrompt = ref(null);
+const swActivated = ref(false);
+
+/**
+ * This function will register a periodic sync check every hour, you can modify the interval as needed.
+ * @param {string} swUrl
+ * @param {ServiceWorkerRegistration} r
+ */
+ function registerPeriodicSync(swUrl, r) {
+  if (period <= 0) return;
+
+  setInterval(async () => {
+    if ('onLine' in navigator && !navigator.onLine)
+      return;
+
+    const resp = await fetch(swUrl, {
+      cache: 'no-store',
+      headers: {
+        'cache': 'no-store',
+        'cache-control': 'no-cache',
+      },
+    });
+
+    if (resp?.status === 200)
+      await r.update();
+  }, period);
+}
+
+const { needRefresh, updateServiceWorker } = useRegisterSW({
+  immediate: true,
+  onRegisteredSW(swUrl, r) {
+    if (period <= 0) return;
+    if (r?.active?.state === 'activated') {
+      swActivated.value = true;
+      registerPeriodicSync(swUrl, r);
+    }
+    else if (r?.installing) {
+      r.installing.addEventListener('statechange', (e) => {
+        /** @type {ServiceWorker} */
+        const sw = e.target;
+        swActivated.value = sw.state === 'activated';
+        if (swActivated.value)
+          registerPeriodicSync(swUrl, r);
+      });
+    }
+  },
+});
+
+const checkForUpdate = async () => {
+  if (swActivated.value) {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration) {
+      registration.update();
+      mitt.emit('showToast', { msg: '正在检查更新...' });
+    } else {
+      mitt.emit('showToast', { msg: '没有可用的更新' });
+    }
+  } else {
+    mitt.emit('showToast', { msg: '没有可用的更新' });
+  }
+};
 
 onMounted(() => {
   window.addEventListener('beforeinstallprompt', (e) => {
@@ -26,7 +91,7 @@ onMounted(() => {
   });
 });
 
-const installOrUpdateApp = async () => {
+const installApp = async () => {
   if (deferredPrompt.value) {
     deferredPrompt.value.prompt();
     const { outcome } = await deferredPrompt.value.userChoice;
@@ -128,8 +193,15 @@ const openLogoutConfirmDialog = () => {
           color="primary"
           append-icon="mdi-chevron-right"
           prepend-icon="mdi-download"
-          title="安装或更新应用程序"
-          @click="installOrUpdateApp"
+          title="安装应用程序"
+          @click="installApp"
+        />
+        <v-list-item
+          color="primary"
+          append-icon="mdi-chevron-right"
+          prepend-icon="mdi-update"
+          title="检查应用更新"
+          @click="checkForUpdate"
         />
         <v-divider />
         <v-list-item
@@ -203,5 +275,28 @@ const openLogoutConfirmDialog = () => {
         </v-card-actions>
       </v-card>
     </v-form>
+  </v-dialog>
+  <v-dialog
+    v-model="needRefresh"
+    width="400"
+  >
+    <v-card title="发现新版本">
+      <v-card-text>检测到有新版本，是否立即更新？</v-card-text>
+      <v-card-actions>
+        <v-btn
+          text
+          @click="needRefresh = false"
+        >
+          稍后
+        </v-btn>
+        <v-btn
+          text
+          color="primary"
+          @click="updateServiceWorker()"
+        >
+          立即更新
+        </v-btn>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </template>
