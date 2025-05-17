@@ -52,14 +52,16 @@ mitt.on('update:selectedCount', ({ dish, isAdd }) => {
             text="全部"
             to="/dishes/all"
           />
-          <v-tab
-            v-for="category in categories"
-            :key="category.name"
-            class="h-auto mb-4 justify-center"
-            :to="`/dishes/${category.name}`"
-            :text="category.name"
-            :prepend-icon="category.icon"
-          />
+          <div class="overflow-y-auto max-h-[50vh]">
+            <v-tab
+              v-for="category in categories"
+              :key="category.name"
+              class="h-auto mb-4 justify-center"
+              :to="`/dishes/${category.name}`"
+              :text="category.name"
+              :prepend-icon="category.icon"
+            />
+          </div>
           <v-divider class="mb-4" />
           <v-tab
             class="h-auto mb-4 justify-center"
