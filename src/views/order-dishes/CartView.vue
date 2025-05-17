@@ -50,7 +50,7 @@ const handleCheckoutClick = () => {
     </div>
     <div
       id="dishes"
-      class="overflow-y-auto flex-1 flex h-auto min-h-0"
+      class="overflow-y-auto flex-1 flex-col flex h-auto min-h-0"
     >
       <dishes-item
         v-for="dish in results"
