@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import DishesItem from '@/components/DishesItem.vue';
 import { useCartStore } from '@/stores/cart';
 import router from '@/plugins/router';
@@ -8,6 +8,15 @@ const cartStore = useCartStore();
 const searchKeyword = ref('');
 const dishesInCart = ref(cartStore.cartItems);
 const results = ref(dishesInCart.value);
+
+watch(
+  () => cartStore.cartItems,
+  (newItems) => {
+    dishesInCart.value = newItems;
+    results.value = newItems;
+  },
+  { immediate: true }
+);
 
 const handleSearchClick = () => {
   if (searchKeyword.value === '') {
